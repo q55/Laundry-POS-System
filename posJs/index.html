@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Laundry POS</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600&display=swap"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: "Cairo", sans-serif;
+      }
+
+      html,
+      body {
+        background: linear-gradient(135deg, rgb(93, 93, 163), rgb(1, 1, 1));
+        height: 100%;
+        margin: 0;
+      }
+
+      .container {
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 30px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 400px;
+        z-index: 10;
+        position: relative; /* This is okay. */
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+      }
+      .date-time-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        direction: rtl;
+        margin-bottom: 20px;
+      }
+
+      .dateAtRecipt,
+      .timeAtRecipt {
+        font-size: 20px;
+        display: flex;
+        font-weight: bold;
+        align-items: center;
+      }
+
+      .dateAtRecipt > span:first-child,
+      .timeAtRecipt > span:first-child {
+        margin-right: 10px;
+      }
+
+      button:hover {
+        background-color: #293450;
+      }
+
+      .header {
+        background-color: #1c293f;
+        height: 80px;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+        color: #fff;
+      }
+
+      .title {
+        position: absolute;
+        right: 30px;
+        font-size: 30px;
+      }
+
+      #dailyIncome {
+        position: absolute;
+        right: 180px;
+        font-size: 30px;
+        padding-right: 25px;
+      }
+
+      .right-sidebar {
+        height: calc(100% - 80px);
+        position: fixed;
+        top: 80px;
+        right: 0;
+        width: 32%;
+        background-color: #e8e8e8;
+        overflow-y: scroll; /* This allows for scrolling if the content exceeds the height */
+        padding: 20px;
+      }
+
+      .item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .remove {
+        color: red;
+        cursor: pointer;
+      }
+
+      .images-items {
+        width: 60%;
+      }
+
+      img {
+        width: 200px;
+        height: 200px;
+        border-radius: 20%;
+        margin: 10px;
+        cursor: pointer;
+      }
+
+      button {
+        padding: 10px 20px;
+        background-color: #1c293f;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+      #resetBillBtn {
+        position: relative;
+        left: 150px;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #ff0000;
+        border-radius: 5%;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        direction: rtl;
+        padding-left: 10;
+      }
+      .item img {
+        transition: transform 0.3s;
+      }
+
+      .item img:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .remove:hover {
+        text-decoration: underline;
+      }
+      #currentDate {
+        font-size: 14px;
+        margin-bottom: 20px;
+        border-right: 3px solid #e0e0e0;
+        padding-right: 10px;
+        text-align: left;
+      }
+      #currentTime {
+        font-size: 30px;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        text-align: left;
+        direction: ltr;
+        position: relative;
+        right: 1150px;
+        top: 5px;
+      }
+      .bill-info {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      .bill-info,
+      .bill-info th,
+      .bill-info td {
+        border: 1px solid #000;
+      }
+
+      .bill-info th,
+      .bill-info td {
+        padding: 8px 12px;
+        text-align: left;
+      }
+
+      .bill-info th {
+        background-color: #e0e0e0;
+      }
+      .totalAmountBox {
+        margin: 20px;
+        margin-left: 0px;
+        direction: rtl;
+      }
+      #totalAmount {
+        font-size: 30px; /* adjust this value to your preference */
+        font-weight: bold;
+        display: block;
+        margin-top: 20px;
+        border-top: 2px solid #333;
+        padding-top: 20px;
+      }
+      #totalAmountText {
+        margin-top: 10px;
+        border-top: 2px solid #333;
+        padding-top: 10px;
+
+        font-size: 15px;
+        font-weight: bold;
+        direction: rtl;
+        display: block;
+      }
+      #printBillBtn {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #1c293f;
+        border-radius: 5%;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        direction: rtl;
+        padding-left: 10;
+      }
+      label[for="cash"] {
+        font-size: 30px;
+      }
+      label[for="creditCard"] {
+        font-size: 30px;
+      }
+      @media print {
+        .paymantBox {
+          display: none;
+        }
+        .mada {
+          display: none;
+        }
+        body {
+          font-family: "Arial", sans-serif;
+          background-color: #fff;
+          color: #333;
+          padding: 30px;
+        }
+        .bill-info th:first-child,
+        .bill-info td:first-child {
+          display: none;
+        }
+        .header,
+        .images-items,
+        button {
+          display: none;
+        }
+
+        .right-sidebar::before {
+          content: "مغسلة ديباجة";
+          font-size: 36px;
+          font-weight: bold;
+          display: block;
+          margin-bottom: 30px;
+          text-align: center;
+        }
+        #currentDate {
+          font-size: 14px;
+          margin-bottom: 20px;
+          border-right: 3px solid #e0e0e0;
+          padding-right: 10px;
+          text-align: left;
+          color: #000;
+        }
+        #currentTime {
+          color: #000;
+          display: block;
+          font-size: 30px;
+          margin-bottom: 20px;
+          padding-bottom: 10px;
+          text-align: left;
+          direction: ltr;
+          position: relative;
+          right: 1150px;
+          top: 5px;
+        }
+        h2 {
+          font-size: 28px;
+          border-bottom: 1px solid #e0e0e0;
+          padding-bottom: 20px;
+          margin: 0 0 20px 0;
+        }
+        .bill-info {
+          margin-top: 20px;
+          list-style-type: none;
+          padding-left: 0;
+        }
+        .item {
+          font-size: 16px;
+          padding: 8px 0;
+          border: 1px dashed #e0e0e0;
+        }
+        .remove {
+          display: none;
+        }
+        #totalAmount {
+          font-size: 22px;
+          font-weight: bold;
+          display: block;
+          margin-top: 20px;
+          border: 2px solid #333;
+          padding-top: 20px;
+        }
+        input[type="radio"] {
+          display: none;
+        }
+
+        label {
+          font-size: 16px;
+          padding: 8px 0;
+        }
+        body {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          border: 2px solid #333;
+        }
+
+        .right-sidebar {
+          position: static; /* Remove fixed position */
+          width: 80%; /* Adjust width as needed */
+          margin: auto; /* Centers the content horizontally */
+          overflow: visible; /* To prevent scrolling during print */
+        }
+      }
+    </style>
+  </head>
+
+  <body style="background-color: rgb(62, 70, 85)">
+    <header class="header">
+      <div class="title">الدخل اليومي</div>
+      <h1 id="dailyIncome">0</h1>
+      <!-- ... -->
+      <div id="currentDate" style="font-size: 30px"></div>
+      <div id="currentTime"></div>
+      <!-- ... -->
+    </header>
+
+    <aside class="right-sidebar">
+      <h2 style="text-align: center">فاتورة ضريبية مبسطة</h2>
+
+      <div class="date-time-wrapper">
+        <div class="dateAtRecipt">
+          <span>التاريخ:&nbsp; &nbsp; </span>
+          <span id="sidebarCurrentDate"></span>
+        </div>
+
+        <div class="timeAtRecipt">
+          <span>الوقت:&nbsp; &nbsp; </span>
+          <span id="sidebarCurrentTime"></span>
+        </div>
+      </div>
+
+      <table class="bill-info">
+        <thead>
+          <tr>
+            <th>حذف</th>
+            <th>الأجمالي</th>
+            <th>السعر</th>
+            <th>الكمية</th>
+            <th>الخدمة</th>
+            <th>العنصر</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="totalAmountBox">
+        <span id="totalAmountText">السعر الأجمالي : </span>
+        <span id="totalAmount">0.00</span>
+      </div>
+      <h2 class="paymantBox">طريقة الدفع :</h2>
+      <div>
+        <input
+          type="radio"
+          name="paymentMethod"
+          id="cash"
+          value=" نقدي"
+          checked
+        />
+        <label class="paymantBox" for="cash">دفع نقدي</label>
+      </div>
+      <div class="mada">
+        <input type="radio" name="paymentMethod" id="creditCard" value="مدى" />
+        <label for="creditCard">مدى</label>
+      </div>
+
+      <div class="paymantBox">
+        <button id="printBillBtn" onclick="printBill()">طباعة فاتورة</button>
+        <button id="resetBillBtn" onclick="resetBill()">حذف الفاتورة</button>
+      </div>
+      <div style="margin-top: 30px"></div>
+    </aside>
+
+    <div class="images-items">
+      <img src="thob.jpg" alt="Thob" onclick="addToBill('ثوب', 10)" />
+      <img
+        src="coloredThob.jpg"
+        alt="Colored Thob"
+        onclick="addToBill('ثوب ملون', 12)"
+      />
+      <img src="shmagh.jpg" alt="Shmagh" onclick="addToBill('شماغ', 5)" />
+      <img src="ghtra.jpg" alt="Ghtra" onclick="addToBill('غترة', 5.50)" />
+      <img src="abaih.jpg" alt="Abaih" onclick="addToBill('عباية', 15)" />
+      <img
+        src="bedSheet.jpg"
+        alt="Bed Sheet"
+        onclick="addToBill('شرشف نوم', 8)"
+      />
+      <img
+        src="blanket.jpg"
+        alt="Blanket"
+        onclick="addToBill('بطانية', 12.50)"
+      />
+      <img src="dress.jpg" alt="Dress" onclick="addToBill('فستان', 25)" />
+      <img src="jacket.jpg" alt="Jacket" onclick="addToBill('جاكيت', 20)" />
+      <img
+        src="manshafah.jpg"
+        alt="Manshafah"
+        onclick="addToBill('منشفة', 10.50)"
+      />
+      <img src="pants.jpg" alt="Pants" onclick="addToBill('سروال', 15.50)" />
+      <img src="sheet.jpg" alt="Sheet" onclick="addToBill('شرشف', 7.50)" />
+      <img src="shoes.jpg" alt="Shoes" onclick="addToBill('جزمة', 12)" />
+      <img src="short.jpg" alt="Short" onclick="addToBill('شورت', 10)" />
+      <img src="taqiah.jpg" alt="Taqiah" onclick="addToBill('طاقيه', 5)" />
+      <img src="tshirt.jpg" alt="T-Shirt" onclick="addToBill('فنيلة', 7.50)" />
+      <img
+        src="underwear.jpg"
+        alt="Underwear"
+        onclick="addToBill('ملابس داخليه', 4.50)"
+      />
+      <img
+        src="w.mSuite.jpg"
+        alt="W.M Suite"
+        onclick="addToBill('لبس عسكري', 30)"
+      />
+    </div>
+
+    <script>
+      let total = 0;
+      let totalDaily = 0;
+
+      function resetBill() {
+        total = 0;
+        updateTotal();
+        const billListRows = document.querySelectorAll(".bill-info tbody tr");
+        billListRows.forEach((row) => row.remove()); // Clear all rows
+      }
+
+      function addToBill(itemName, itemPrice) {
+        const billList = document.querySelector(".bill-info tbody");
+        const tableRow = document.createElement("tr");
+
+        let quantity = parseInt(prompt(`كم العدد ؟`));
+        if (isNaN(quantity) || quantity <= 0) {
+          alert("الرقم المدخل غير صحيح");
+          return;
+        }
+
+        let serviceType = prompt(
+          "1. غسيل فقط\n2. غسيل وكوي\n3. كوي فقط\nاختر الخدمة المطلوبة "
+        );
+
+        switch (serviceType) {
+          case "1":
+            serviceType = "غسيل فقط";
+            break;
+          case "2":
+            serviceType = "غسيل وكوي";
+            break;
+          case "3":
+            serviceType = "كوي فقط";
+            break;
+          default:
+            alert("الرقم المدخل غير صحيح");
+            return;
+        }
+
+        tableRow.innerHTML = `
+      <td><span class="remove" onclick="removeFromBill(${
+        itemPrice * quantity
+      }, this)">[Remove]</span></td>
+      <td>$${(itemPrice * quantity).toFixed(2)}</td>
+      <td>$${itemPrice.toFixed(2)}</td>
+      <td>${quantity}</td>
+      <td>${serviceType}</td>
+      <td>${itemName}</td>
+    `;
+        billList.appendChild(tableRow);
+
+        total += itemPrice * quantity;
+        updateTotal();
+      }
+
+      function removeFromBill(itemPrice, element) {
+        const tableRow = element.closest("tr");
+        tableRow.remove();
+
+        total -= itemPrice;
+        updateTotal();
+      }
+
+      function removeFromBill(itemPrice, element) {
+        const tableRow = element.closest("tr");
+        tableRow.remove();
+
+        total -= itemPrice;
+        updateTotal();
+      }
+      function setDateTime() {
+        const now = new Date();
+
+        // Extract the date in ISO format (e.g., 2021-05-01)
+        const currentDate = now.toISOString().split("T")[0];
+        document.getElementById("currentDate").innerText = currentDate;
+
+        // Convert to 12-hour format with AM/PM notation
+        let hours = now.getHours();
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+        const ampm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        const currentTime = `${hours}:${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${ampm}`;
+        document.getElementById("currentTime").innerText = currentTime;
+        document.getElementById("sidebarCurrentDate").innerText = currentDate;
+        document.getElementById("sidebarCurrentTime").innerText = currentTime;
+      }
+
+      setDateTime(); // Call this function to initialize date and time.
+
+      // Update every second (1000 milliseconds)
+      setInterval(setDateTime, 1000);
+
+      function updateTotal() {
+        let totalElement = document.getElementById("totalAmount");
+        totalElement.textContent = total.toFixed(2);
+      }
+      function printBill() {
+        let paymentMethod = document.querySelector(
+          'input[name="paymentMethod"]:checked'
+        ).value;
+        const paymentDiv = document.createElement("div");
+        paymentDiv.id = "paymentMethodDiv";
+        paymentDiv.textContent = `طريقة الدفع : ${
+          paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1)
+        }`;
+        paymentDiv.style.direction = "rtl";
+        paymentDiv.style.border = "1px solid #000";
+        const rightSidebar = document.querySelector(".right-sidebar");
+
+        rightSidebar.insertBefore(paymentDiv, rightSidebar.lastChild); // Add to the top of right-sidebar
+
+        window.print();
+
+        // Cleanup - remove the added div after printing
+        paymentDiv.remove();
+
+        totalDaily += total;
+        document.getElementById("dailyIncome").innerHTML =
+          totalDaily.toFixed(2);
+        total = 0;
+        updateTotal();
+        const billListRows = document.querySelectorAll(".bill-info tbody tr");
+        billListRows.forEach((row) => row.remove()); // Clear all rows
+      }
+    </script>
+  </body>
+</html>
