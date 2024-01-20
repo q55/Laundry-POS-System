@@ -16,4 +16,4 @@ Welcome to the Laundry-POS-System! This innovative Point of Sale (POS) system is
 Contributions to enhance and improve the POS system are highly welcome. Please read our contributing guidelines for more information.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
