@@ -3,6 +3,9 @@
 ## Introduction
 Welcome to the Laundry-POS-System! This innovative Point of Sale (POS) system is specifically crafted for laundry businesses and is fully designed in Arabic. Our system focuses on providing a culturally relevant and user-friendly experience for Arabic-speaking regions. It ensures seamless operation in laundry service management, making it an ideal solution for laundry business owners looking to streamline their operations.
 
+This project was made using js , html and css
+so it can work as a local website .
+
 ## Screenshots
 ### Interface :
 ![Image Description 1](https://github.com/q55/Laundry-POS-System/assets/107367949/80edd3cd-97be-4a7b-9e9c-5756b63a3068)
